@@ -12,9 +12,10 @@ metadata:
   }
 ---
 
-# SKILL.md - AgenticLetters
+# AgenticLetters
 
-Send physical letters anywhere in Germany with a single command.
+Send physical letters anywhere in Germany via the [agentic-letters.com](https://agentic-letters.com) API.
+Your PDF gets printed, put in an envelope, and mailed — one API call, one real letter.
 
 ## When to use
 
@@ -32,7 +33,16 @@ mkdir -p ~/.openclaw/secrets
 echo 'AGENTIC_LETTERS_API_KEY=al_your_api_key' > ~/.openclaw/secrets/agentic_letters.env
 ```
 
-Get your API key at https://agentic-letters.com/buy
+## Getting an API key
+
+AgenticLetters has no account system and no login. The flow is:
+
+1. Go to https://agentic-letters.com/buy
+2. Enter an email address and pick a credit package
+3. Pay via Stripe (card)
+4. The API key (starts with `al_`) is sent to that email immediately
+
+The key is a Bearer token used in every request. If the user buys more credits later with the same email, the existing key gets topped up — no new key issued. If the user doesn't have a key yet, guide them to https://agentic-letters.com/buy.
 
 ## Tool
 
