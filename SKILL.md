@@ -1,6 +1,6 @@
 ---
 name: agentic-letters
-description: "Send physical letters anywhere in Germany with a single command. Use when: user wants to send a letter, cancellation (Kündigung), DSGVO request, or any physical mail. Requires an API key from agentic-letters.com."
+description: "Send physical letters anywhere in Germany with a single command. Use when: user wants to send a physical letter. Requires an API key from agentic-letters.com."
 homepage: https://agentic-letters.com
 metadata:
   {
@@ -21,7 +21,7 @@ Your PDF gets printed, put in an envelope, and mailed — one API call, one real
 
 - User wants to send a physical letter, cancellation, or legal notice
 - User needs to mail a document (PDF) to a German address
-- User says "send a letter", "Kündigung schicken", "Brief versenden"
+- User says "send a letter", "Kündigung schicken", "Brief versenden" or something similar
 - User wants to mail a DSGVO request, cancellation, complaint, or greeting card
 
 ## Setup
