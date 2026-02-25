@@ -15,6 +15,7 @@ import sys
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
 from typing import NoReturn
@@ -27,6 +28,7 @@ from typing import NoReturn
 API_BASE = "https://agentic-letters.com/api"
 ENV_FILE = os.path.expanduser("~/.openclaw/secrets/agentic_letters.env")
 ENV_VAR = "AGENTIC_LETTERS_API_KEY"
+RECORDS_DIR = os.path.expanduser("~/.openclaw/workspace/skills/agentic-letters/records")
 
 
 # ---------------------------------------------------------------------------
@@ -181,6 +183,54 @@ class AgenticLettersClient:
 
 
 # ---------------------------------------------------------------------------
+# Local letter records
+# ---------------------------------------------------------------------------
+
+def _ensure_records_dir() -> Path:
+    p = Path(RECORDS_DIR)
+    p.mkdir(parents=True, exist_ok=True)
+    return p
+
+
+def save_record(send_result: dict, recipient: dict, label: str | None) -> Path:
+    """Save a letter record after successful send."""
+    records = _ensure_records_dir()
+    letter_id = send_result["id"]
+    date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    record = {
+        "id": letter_id,
+        "status": send_result.get("status", "queued"),
+        "type": send_result.get("type", "standard"),
+        "label": label,
+        "recipient": recipient,
+        "created_at": send_result.get("created_at", datetime.now(timezone.utc).isoformat()),
+        "credits_remaining": send_result.get("credits_remaining"),
+        "last_checked": None,
+    }
+    path = records / f"{date}_{letter_id[:8]}.json"
+    path.write_text(json.dumps(record, indent=2, ensure_ascii=False))
+    return path
+
+
+def update_record_status(letter_id: str, status_result: dict) -> None:
+    """Update an existing record with fresh status from the API."""
+    records = _ensure_records_dir()
+    # Find record by ID prefix
+    for f in sorted(records.iterdir(), reverse=True):
+        if not f.name.endswith(".json"):
+            continue
+        try:
+            data = json.loads(f.read_text())
+        except Exception:
+            continue
+        if data.get("id", "").startswith(letter_id) or letter_id.startswith(data.get("id", "")[:8]):
+            data["status"] = status_result.get("status", data["status"])
+            data["last_checked"] = datetime.now(timezone.utc).isoformat()
+            f.write_text(json.dumps(data, indent=2, ensure_ascii=False))
+            return
+
+
+# ---------------------------------------------------------------------------
 # API key resolution
 # ---------------------------------------------------------------------------
 
@@ -258,8 +308,18 @@ def main() -> None:
             letter_type=args.letter_type,
             label=args.label,
         )
+        # Save local record
+        recipient = {
+            "name": args.name,
+            "street": args.street,
+            "zip": args.zip,
+            "city": args.city,
+            "country": args.country,
+        }
+        save_record(result, recipient, args.label)
     elif args.command == "status":
         result = client.get_letter(args.id)
+        update_record_status(args.id, result)
     elif args.command == "list":
         result = client.list_letters()
     elif args.command == "credits":

@@ -104,6 +104,25 @@ python3 {baseDir}/agentic_letters.py credits
 python3 {baseDir}/agentic_letters.py list
 ```
 
+## Local records
+
+Every sent letter is tracked locally in `{baseDir}/records/`. Each file is named `YYYY-MM-DD_<id-prefix>.json` and contains:
+
+```json
+{
+  "id": "550e8400-...",
+  "status": "queued",
+  "type": "standard",
+  "label": "Kündigung Fitnessstudio",
+  "recipient": { "name": "Max Mustermann", "street": "Musterstraße 1", "zip": "10115", "city": "Berlin", "country": "DE" },
+  "created_at": "2026-02-24T19:00:00Z",
+  "credits_remaining": 4,
+  "last_checked": null
+}
+```
+
+Records are created automatically on `send` and updated on `status`. The date prefix lets agents quickly find recent letters without scanning old files. To check on pending letters, look at recent record files and call `status` for any that aren't `sent` yet.
+
 ## Generating PDFs
 
 If the user doesn't have a PDF ready, generate one:
