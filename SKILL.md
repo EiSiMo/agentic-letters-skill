@@ -8,6 +8,7 @@ metadata:
       {
         "emoji": "✉️",
         "requires": { "bins": ["python3"] },
+        "primaryEnv": "AGENTIC_LETTERS_API_KEY",
       },
   }
 ---
@@ -26,11 +27,15 @@ Your PDF gets printed, put in an envelope, and mailed — one API call, one real
 
 ## Setup
 
-Store your API key:
-
+Option A — env file (recommended):
 ```bash
 mkdir -p ~/.openclaw/secrets
 echo 'AGENTIC_LETTERS_API_KEY=al_your_api_key' > ~/.openclaw/secrets/agentic_letters.env
+```
+
+Option B — OpenClaw config (`~/.openclaw/openclaw.json`):
+```json
+{ "skills": { "entries": { "agentic-letters": { "apiKey": "al_your_api_key" } } } }
 ```
 
 ## Getting an API key
@@ -46,7 +51,7 @@ The key is a Bearer token used in every request. If the user buys more credits l
 
 ## Tool
 
-`agentic_letters.py` — a zero-dependency Python CLI (stdlib only).
+`{baseDir}/agentic_letters.py` — a zero-dependency Python CLI (stdlib only).
 
 ## Send a letter
 
@@ -54,7 +59,7 @@ The key is a Bearer token used in every request. If the user buys more credits l
 2. Run the tool:
 
 ```bash
-python3 agentic_letters.py send \
+python3 {baseDir}/agentic_letters.py send \
   --pdf letter.pdf \
   --name "Max Mustermann" \
   --street "Musterstraße 1" \
@@ -82,7 +87,7 @@ Output (JSON to stdout):
 ## Check letter status
 
 ```bash
-python3 agentic_letters.py status <letter-id>
+python3 {baseDir}/agentic_letters.py status <letter-id>
 ```
 
 Status values: `queued` → `printed` → `sent` → `returned`
@@ -90,13 +95,13 @@ Status values: `queued` → `printed` → `sent` → `returned`
 ## Check remaining credits
 
 ```bash
-python3 agentic_letters.py credits
+python3 {baseDir}/agentic_letters.py credits
 ```
 
 ## List all letters
 
 ```bash
-python3 agentic_letters.py list
+python3 {baseDir}/agentic_letters.py list
 ```
 
 ## Generating PDFs
