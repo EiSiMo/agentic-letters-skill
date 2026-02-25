@@ -1,3 +1,17 @@
+---
+name: agentic-letters
+description: "Send physical letters anywhere in Germany with a single command. Use when: user wants to send a letter, cancellation (Kündigung), DSGVO request, or any physical mail. Requires an API key from agentic-letters.com."
+homepage: https://agentic-letters.com
+metadata:
+  {
+    "openclaw":
+      {
+        "emoji": "✉️",
+        "requires": { "bins": ["python3"] },
+      },
+  }
+---
+
 # SKILL.md - AgenticLetters
 
 Send physical letters anywhere in Germany with a single command.
